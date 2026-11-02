@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight, Check, Github, MonitorPlay, Pause, Play, VolumeX, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Github, X } from "lucide-react";
 import { FEATURED_PROJECTS, Project } from "@/data/portfolio-data";
 
 function getYouTubeVideoId(url?: string) {
@@ -24,17 +24,20 @@ function getYouTubeVideoId(url?: string) {
   return null;
 }
 
-function getYouTubeEmbedUrl(videoId: string, autoplay = true, showControls = false) {
+function getYouTubeEmbedUrl(videoId: string) {
   const parameters = new URLSearchParams({
-    autoplay: autoplay ? "1" : "0",
+    autoplay: "1",
     mute: "1",
     loop: "1",
     playlist: videoId,
-    controls: showControls ? "1" : "0",
+    controls: "0",
     modestbranding: "1",
     playsinline: "1",
     rel: "0",
     iv_load_policy: "3",
+    cc_load_policy: "0",
+    disablekb: "1",
+    fs: "0",
     vq: "hd1080",
   });
 
@@ -55,7 +58,7 @@ export default function ProjectsSection() {
 
   const exactDisplayTags: Record<string, string[]> = {
     "growup-ai": ["Flutter", "Firebase", "Gemini"],
-    "biosearch": ["React", "FastAPI", "AWS"],
+    "biosearch": ["React", "FastAPI", "Vercel"],
     "betazenx-erp": ["Next.js", "PostgreSQL", "Docker"],
     "syndoc": ["Node.js", "Socket.io", "MongoDB"],
   };
@@ -75,24 +78,24 @@ export default function ProjectsSection() {
   };
 
   return (
-    <section id="projects" className="py-8 sm:py-12 border-t border-neutral-200/60 dark:border-neutral-800/60">
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
+    <section id="projects" className="border-t border-neutral-200/60 py-12 dark:border-neutral-800/60 sm:py-16">
+      <div className="mx-auto max-w-[1360px] px-4 sm:px-6">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
           
           {/* Left Heading & Intro (Cols 1-3) */}
-          <div className="lg:col-span-3 space-y-3 pt-1">
+          <div className="space-y-4 pt-1 lg:col-span-3">
             <div className="flex items-center gap-1.5 text-[11px] font-mono tracking-wider text-neutral-400 uppercase">
               <span>// MY PROJECTS</span>
               <span>—</span>
             </div>
 
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white leading-[1.1]">
+            <h2 className="font-serif text-4xl font-bold leading-[1.05] tracking-tight text-neutral-900 dark:text-white sm:text-5xl">
               Featured<br />
               Projects.
             </h2>
 
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-xs">
+            <p className="max-w-xs text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
               A collection of real-world projects that showcase my skills and creativity.
             </p>
 
@@ -107,15 +110,14 @@ export default function ProjectsSection() {
             </div>
           </div>
 
-          {/* Right 4 Project Cards Row (Cols 4-12) */}
-          <div className="lg:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Larger project cards stay readable as a 2 × 2 grid on desktop. */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-9 lg:gap-6">
             {FEATURED_PROJECTS.map((proj) => {
               const imgSrc = exactProjectImages[proj.id] || proj.image;
               const title = exactDisplayTitles[proj.id] || proj.title;
               const cat = exactDisplayCategories[proj.id] || proj.category;
               const tags = exactDisplayTags[proj.id] || proj.technologies.slice(0, 3);
               const videoId = getYouTubeVideoId(proj.demoUrl);
-              const isVideoActive = activeVideoProjectId === proj.id;
 
               return (
                 <div
@@ -127,83 +129,53 @@ export default function ProjectsSection() {
                   onPointerLeave={(event) => {
                     if (event.pointerType === "mouse") setActiveVideoProjectId(null);
                   }}
-                  className="rounded-2xl border border-neutral-200/90 dark:border-neutral-800 bg-white dark:bg-neutral-900/80 p-3 flex flex-col justify-between shadow-xs hover:border-blue-300 dark:hover:border-blue-500/50 transition-all duration-300 cursor-pointer group"
+                  className="group flex min-h-[340px] cursor-pointer flex-col justify-between rounded-2xl border border-neutral-200/90 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-950/5 dark:border-neutral-800 dark:bg-neutral-900/80 dark:hover:border-blue-500/50 sm:p-5"
                 >
                   <div>
                     {/* Project Preview Image */}
                     <div
-                      role={videoId ? "button" : undefined}
-                      tabIndex={videoId ? 0 : undefined}
-                      aria-label={videoId ? `${isVideoActive ? "Pause" : "Play"} ${title} video preview` : undefined}
-                      onClick={(event) => {
-                        if (!videoId) return;
-                        event.stopPropagation();
-                        setActiveVideoProjectId(isVideoActive ? null : proj.id);
-                      }}
-                      onKeyDown={(event) => {
-                        if (!videoId || (event.key !== "Enter" && event.key !== " ")) return;
-                        event.preventDefault();
-                        setActiveVideoProjectId(isVideoActive ? null : proj.id);
-                      }}
-                      className={`relative w-full aspect-[170/82] rounded-xl overflow-hidden border border-neutral-100 dark:border-neutral-800 mb-3 bg-neutral-100 dark:bg-neutral-950 ${videoId ? "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900" : ""}`}
+                      className="relative mb-4 w-full aspect-video overflow-hidden rounded-xl border border-neutral-100 bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-950"
                     >
                       <Image
                         src={imgSrc}
                         alt={title}
                         fill
-                        className={`object-cover transition-all duration-700 ${isVideoActive ? "scale-105 opacity-0" : "group-hover:scale-103"}`}
-                        sizes="(min-width: 1024px) 20vw, 45vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-103"
+                        sizes="(min-width: 1024px) 34vw, (min-width: 640px) 46vw, 100vw"
                       />
 
-                      {videoId && isVideoActive && (
+                      {videoId && activeVideoProjectId === proj.id && (
                         <iframe
                           src={getYouTubeEmbedUrl(videoId)}
-                          title={`${title} project video preview`}
-                          className="absolute inset-0 z-10 h-full w-full pointer-events-none"
-                          allow="autoplay; encrypted-media; picture-in-picture"
+                          title={`${title} silent project preview`}
+                          className="pointer-events-none absolute inset-0 z-10 h-full w-full border-0"
+                          allow="autoplay; encrypted-media"
+                          loading="lazy"
                           referrerPolicy="strict-origin-when-cross-origin"
                         />
-                      )}
-
-                      {videoId && (
-                        <>
-                          <div className={`absolute inset-0 z-20 bg-gradient-to-t from-slate-950/70 via-transparent to-slate-950/20 transition-opacity duration-300 ${isVideoActive ? "opacity-35" : "opacity-100"}`} />
-                          <div className="absolute left-2 top-2 z-30 inline-flex items-center gap-1 rounded-full border border-white/25 bg-slate-950/55 px-1.5 py-1 text-[8px] font-semibold tracking-[0.12em] text-white backdrop-blur-md">
-                            <MonitorPlay className="h-2.5 w-2.5 text-blue-300" />
-                            DEMO REEL
-                          </div>
-                          <div className="absolute right-2 top-2 z-30 rounded-full border border-white/20 bg-slate-950/50 px-1.5 py-1 font-mono text-[8px] text-white/85 backdrop-blur-md">HD · LOOP</div>
-                          <div className="absolute bottom-2 left-2 right-2 z-30 flex items-center justify-between text-white">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-slate-950/55 px-2 py-1 text-[8px] font-medium backdrop-blur-md">
-                              {isVideoActive ? <Pause className="h-2.5 w-2.5" /> : <Play className="h-2.5 w-2.5 fill-current" />}
-                              {isVideoActive ? "Playing preview" : "Hover or tap to play"}
-                            </span>
-                            {isVideoActive && <VolumeX className="h-3 w-3 opacity-90" aria-label="Muted" />}
-                          </div>
-                        </>
                       )}
                     </div>
 
                     {/* Title with Arrow Up-Right */}
-                    <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-semibold text-xs text-neutral-900 dark:text-white group-hover:text-[#315CEB] transition-colors">
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <h3 className="text-base font-semibold text-neutral-900 transition-colors group-hover:text-[#315CEB] dark:text-white sm:text-lg">
                         {title}
                       </h3>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-black dark:group-hover:text-white transition-colors shrink-0" />
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-neutral-500 transition-colors group-hover:text-black dark:group-hover:text-white" />
                     </div>
 
                     {/* Category */}
-                    <p className="text-[10px] text-neutral-500 dark:text-neutral-400 leading-tight mb-3">
+                    <p className="mb-4 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
                       {cat}
                     </p>
                   </div>
 
                   {/* Tags Pill Row */}
-                  <div className="flex flex-wrap gap-1 pt-1 border-t border-neutral-100 dark:border-neutral-800/80">
+                  <div className="flex flex-wrap gap-1.5 border-t border-neutral-100 pt-3 dark:border-neutral-800/80">
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[9px] px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 font-medium"
+                        className="rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
                       >
                         {tag}
                       </span>
@@ -253,15 +225,14 @@ export default function ProjectsSection() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-3">
                   <h4 className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">Product walkthrough</h4>
-                  <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground"><VolumeX className="h-3 w-3" /> Starts muted</span>
+                  <span className="text-[10px] text-muted-foreground">Loops silently</span>
                 </div>
                 <div className="relative aspect-video overflow-hidden rounded-2xl border border-border bg-neutral-950 shadow-sm">
                   <iframe
-                    src={getYouTubeEmbedUrl(selectedVideoId, true, true)}
-                    title={`${selectedProject.title} project walkthrough`}
-                    className="absolute inset-0 h-full w-full"
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowFullScreen
+                    src={getYouTubeEmbedUrl(selectedVideoId)}
+                    title={`${selectedProject.title} silent project preview`}
+                    className="pointer-events-none absolute inset-0 h-full w-full border-0"
+                    allow="autoplay; encrypted-media"
                     referrerPolicy="strict-origin-when-cross-origin"
                   />
                 </div>

@@ -50,8 +50,8 @@ export default function Hero() {
               FULL-STACK DEVELOPER · AI &amp; ML ENGINEER
             </p>
 
-            <h1 className="max-w-[680px] text-[clamp(3.25rem,7vw,6.3rem)] font-semibold leading-[0.91] tracking-[-0.065em] text-slate-950 dark:text-white">
-              Hello, I&apos;m <span className="hero-name-gradient block font-serif italic font-medium tracking-[-0.07em]">Julfikar Ali.</span>
+            <h1 className="max-w-[680px] text-[clamp(3.25rem,7vw,6.3rem)] font-semibold leading-[0.98] tracking-[-0.065em] text-slate-950 dark:text-white">
+              Hello, I&apos;m <span className="hero-name-gradient -ml-1 block px-1 pb-2 font-serif italic font-medium leading-[1.08] tracking-[-0.07em]">Julfikar Ali.</span>
             </h1>
 
             <p className="mt-6 max-w-xl text-sm leading-7 text-slate-600 sm:text-base dark:text-slate-300">
